@@ -72,11 +72,12 @@ func (u *UniswapV3) callOne(pair Pair) (*Price, error) {
 		strings.ReplaceAll(strings.ReplaceAll(gql, "\n", " "), "\t", ""),
 		pairsJSON,
 	)
-
+	//fmt.Println(body)
 	req := &query.HTTPRequest{
-		URL:    uniswapV3URL,
-		Method: "POST",
-		Body:   bytes.NewBuffer([]byte(body)),
+		URL:     uniswapV3URL,
+		Method:  "POST",
+		Body:    bytes.NewBuffer([]byte(body)),
+		Headers: map[string]string{"Content-Type": "text/plain"},
 	}
 
 	// make query

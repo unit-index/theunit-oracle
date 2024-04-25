@@ -11,10 +11,8 @@ import (
 )
 
 // Median is an interface for the median oracle contract:
-// https://github.com/makerdao/median/
 //
 // Contract documentation:
-// https://docs.makerdao.com/smart-contract-modules/oracle-module/median-detailed-documentation
 type Median interface {
 	// Address returns medianizer contract address.
 	Address() common.Address

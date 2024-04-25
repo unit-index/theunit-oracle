@@ -1,18 +1,3 @@
-//  Copyright (C) 2020 Maker Ecosystem Growth Holdings, INC.
-//
-//  This program is free software: you can redistribute it and/or modify
-//  it under the terms of the GNU Affero General Public License as
-//  published by the Free Software Foundation, either version 3 of the
-//  License, or (at your option) any later version.
-//
-//  This program is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//  GNU Affero General Public License for more details.
-//
-//  You should have received a copy of the GNU Affero General Public License
-//  along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
 package transport
 
 import (
@@ -25,7 +10,6 @@ import (
 
 	"github.com/libp2p/go-libp2p-core/crypto"
 
-	suite "github.com/toknowwhy/theunit-oracle"
 	"github.com/toknowwhy/theunit-oracle/pkg/ethereum"
 	"github.com/toknowwhy/theunit-oracle/pkg/log"
 	"github.com/toknowwhy/theunit-oracle/pkg/transport"
@@ -82,7 +66,7 @@ func (c *Transport) Configure(d Dependencies) (transport.Transport, error) {
 		Signer:           d.Signer,
 		Logger:           d.Logger,
 		AppName:          "spire",
-		AppVersion:       suite.Version,
+		AppVersion:       "1",
 	}
 	p, err := p2pTransportFactory(d.Context, cfg)
 	if err != nil {
@@ -105,7 +89,7 @@ func (c *Transport) ConfigureP2PBoostrap(d BootstrapDependencies) (transport.Tra
 		BlockedAddrs:     c.P2P.BlockedAddrs,
 		Logger:           d.Logger,
 		AppName:          "bootstrap",
-		AppVersion:       suite.Version,
+		AppVersion:       "1",
 	}
 	p, err := p2pTransportFactory(d.Context, cfg)
 	if err != nil {

@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"os"
 
 	"github.com/spf13/cobra"
@@ -40,24 +41,25 @@ func NewSupplyCmd(opts *options) *cobra.Command {
 				return err
 			}
 
-			prices, err := srv.Gofer.Prices(tokens...)
+			//fmt.Println(tokens)
+			supply, err := srv.Gofer.TokenTotalSupply(tokens)
 			if err != nil {
 				return err
 			}
-
-			for _, p := range prices {
-				if mErr := srv.Marshaller.Write(os.Stdout, p); mErr != nil {
-					_ = srv.Marshaller.Write(os.Stderr, mErr)
-				}
-			}
-
-			// If any pair was returned with an error, then we should return a non-zero status code.
-			for _, p := range prices {
-				if p.Error != "" {
-					exitCode = 1
-					break
-				}
-			}
+			fmt.Println(supply)
+			//for _, p := range supply {
+			//	if mErr := srv.Marshaller.Write(os.Stdout, p); mErr != nil {
+			//		_ = srv.Marshaller.Write(os.Stderr, mErr)
+			//	}
+			//}
+			//
+			//// If any pair was returned with an error, then we should return a non-zero status code.
+			//for _, p := range prices {
+			//	if p.Error != "" {
+			//		exitCode = 1
+			//		break
+			//	}
+			//}
 
 			return
 		},

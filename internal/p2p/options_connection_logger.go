@@ -1,37 +1,24 @@
-//  Copyright (C) 2020 Maker Ecosystem Growth Holdings, INC.
-//
-//  This program is free software: you can redistribute it and/or modify
-//  it under the terms of the GNU Affero General Public License as
-//  published by the Free Software Foundation, either version 3 of the
-//  License, or (at your option) any later version.
-//
-//  This program is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//  GNU Affero General Public License for more details.
-//
-//  You should have received a copy of the GNU Affero General Public License
-//  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+""
 
 package p2p
 
 import (
-	"github.com/libp2p/go-libp2p-core/network"
-	"github.com/multiformats/go-multiaddr"
+"github.com/libp2p/go-libp2p-core/network"
+"github.com/multiformats/go-multiaddr"
 
-	"github.com/toknowwhy/theunit-oracle/pkg/log"
+"github.com/toknowwhy/theunit-oracle/pkg/log"
 )
 
 // ConnectionLogger logs connected and disconnected hosts,
 func ConnectionLogger() Options {
-	return func(n *Node) error {
-		n.AddNotifee(&connectionLoggerNotifee{n: n})
-		return nil
-	}
+return func (n *Node) error {
+n.AddNotifee(&connectionLoggerNotifee{n: n})
+return nil
+}
 }
 
 type connectionLoggerNotifee struct {
-	n *Node
+n *Node
 }
 
 // Listen implements the network.Notifiee interface.
@@ -42,22 +29,22 @@ func (n *connectionLoggerNotifee) ListenClose(network.Network, multiaddr.Multiad
 
 // Connected implements the network.Notifiee interface.
 func (n *connectionLoggerNotifee) Connected(_ network.Network, conn network.Conn) {
-	n.n.tsLog.get().
-		WithFields(log.Fields{
-			"peerID": conn.RemotePeer().String(),
-			"addr":   conn.RemoteMultiaddr().String(),
-		}).
-		Info("Connected to a host")
+n.n.tsLog.get().
+WithFields(log.Fields{
+"peerID": conn.RemotePeer().String(),
+"addr":   conn.RemoteMultiaddr().String(),
+}).
+Info("Connected to a host")
 }
 
 // Disconnected implements the network.Notifiee interface.
 func (n *connectionLoggerNotifee) Disconnected(_ network.Network, conn network.Conn) {
-	n.n.tsLog.get().
-		WithFields(log.Fields{
-			"peerID": conn.RemotePeer().String(),
-			"addr":   conn.RemoteMultiaddr().String(),
-		}).
-		Info("Disconnected from a host")
+n.n.tsLog.get().
+WithFields(log.Fields{
+"peerID": conn.RemotePeer().String(),
+"addr":   conn.RemoteMultiaddr().String(),
+}).
+Info("Disconnected from a host")
 }
 
 // OpenedStream implements the network.Notifiee interface.

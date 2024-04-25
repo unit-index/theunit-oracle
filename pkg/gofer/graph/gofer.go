@@ -77,6 +77,11 @@ func (g *Gofer) Prices(pairs ...gofer.Pair) (map[gofer.Pair]*gofer.Price, error)
 	return res, nil
 }
 
+func (g *Gofer) TokenTotalSupply(token []gofer.Token) (float64, error) {
+
+	return 0, nil
+}
+
 // Pairs implements the gofer.Gofer interface.
 func (g *Gofer) Pairs() ([]gofer.Pair, error) {
 	var ps []gofer.Pair

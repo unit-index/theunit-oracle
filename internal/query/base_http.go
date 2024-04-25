@@ -1,18 +1,3 @@
-//  Copyright (C) 2020 Maker Ecosystem Growth Holdings, INC.
-//
-//  This program is free software: you can redistribute it and/or modify
-//  it under the terms of the GNU Affero General Public License as
-//  published by the Free Software Foundation, either version 3 of the
-//  License, or (at your option) any later version.
-//
-//  This program is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//  GNU Affero General Public License for more details.
-//
-//  You should have received a copy of the GNU Affero General Public License
-//  along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
 package query
 
 import (
@@ -24,13 +9,13 @@ import (
 )
 
 // Default retry amount
-const defaultRetry = 5
+const defaultRetry = 1
 
 // Default delay between retries
-const defaultDelayBetweenRetries = 1 * time.Second
+const defaultDelayBetweenRetries = 10 * time.Second
 
 // Default timeout for HTTP Request
-const defaultTimeoutInSeconds = 15
+const defaultTimeoutInSeconds = 300
 
 // HTTPRequest default HTTP Request structure
 type HTTPRequest struct {
@@ -112,13 +97,16 @@ func doMakeHTTPRequest(r *HTTPRequest) ([]byte, error) {
 			req.Header.Add(k, v)
 		}
 	}
+	//fmt.Println("doMakeHTTPRequest", r.URL)
 	// Perform HTTP request
 	resp, err := client.Do(req)
+	//fmt.Println("doMakeHTTPRequest:resp", r.Method, r.URL, r.Headers, resp.StatusCode)
 	if err != nil {
 		return nil, err
 	}
+
 	if resp.StatusCode != 200 && resp.StatusCode != 201 {
-		return nil, fmt.Errorf("failed to make HTTP request to %s, got %d status code", r.URL, resp.StatusCode)
+		return nil, fmt.Errorf("failed to make HTTP  requestto %s, got %d status code", r.URL, resp.StatusCode)
 	}
 
 	defer resp.Body.Close()

@@ -28,8 +28,6 @@ const (
 
 // Addresses of multicall contracts. They're used to implement
 // the Client.MultiCall function.
-//
-// https://github.com/makerdao/multicall
 var multiCallContracts = map[uint64]common.Address{
 	mainnetChainID: common.HexToAddress("0xeefba1e63905ef1d7acba5a8513c70307c1ce441"),
 	kovanChainID:   common.HexToAddress("0x2cc8688c5f75e365aaeeb4ea8d6a480405a48d2a"),

@@ -20,8 +20,7 @@ func NewAgentCmd(opts *options) *cobra.Command {
 			if err != nil {
 				return err
 			}
-			if err = srv.
-				Start(); err != nil {
+			if err = srv.Start(); err != nil {
 				return err
 			}
 			defer srv.CancelAndWait()

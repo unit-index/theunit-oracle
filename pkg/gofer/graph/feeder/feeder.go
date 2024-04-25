@@ -78,6 +78,7 @@ func (f *Feeder) Start(ns ...nodes.Node) error {
 	f.log.Infof("Starting")
 
 	gcdTTL := getGCDTTL(ns)
+
 	if gcdTTL < time.Second {
 		gcdTTL = time.Second
 	}

@@ -11,8 +11,8 @@ import (
 )
 
 // Gateio URL
-const gateioSinglePairURL = "https://fx-api.gateio.ws/api/v4/spot/tickers?currency_pair=%s"
-const gateioURL = "https://fx-api.gateio.ws/api/v4/spot/tickers"
+const gateioSinglePairURL = "https://api.gateio.ws/api/v4/spot/tickers?currency_pair=%s"
+const gateioURL = "https://api.gateio.ws/api/v4/spot/tickers"
 
 type gateioResponse struct {
 	Pair   string `json:"currency_pair"`

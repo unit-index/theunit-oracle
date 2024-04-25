@@ -5,8 +5,6 @@ import (
 	"os"
 
 	"github.com/spf13/cobra"
-
-	"github.com/toknowwhy/theunit-oracle/pkg/gofer"
 )
 
 func NewPairsCmd(opts *options) *cobra.Command {
@@ -35,21 +33,22 @@ func NewPairsCmd(opts *options) *cobra.Command {
 			}
 			defer srv.CancelAndWait()
 
-			pairs, err := gofer.NewPairs(args...)
-			if err != nil {
-				return err
-			}
-
-			models, err := srv.Gofer.Models(pairs...)
-			if err != nil {
-				return err
-			}
-
-			for _, p := range models {
-				if mErr := srv.Marshaller.Write(os.Stdout, p); mErr != nil {
-					_ = srv.Marshaller.Write(os.Stderr, mErr)
-				}
-			}
+			//pairs, e
+			//rr := gofer.NewPairs(args...)
+			//if err != nil {
+			//	return err
+			//}
+			//
+			//models, err := srv.Gofer.Models(pairs...)
+			//if err != nil {
+			//	return err
+			//}
+			//
+			//for _, p := range models {
+			//	if mErr := srv.Marshaller.Write(os.Stdout, p); mErr != nil {
+			//		_ = srv.Marshaller.Write(os.Stderr, mErr)
+			//	}
+			//}
 
 			return
 		},

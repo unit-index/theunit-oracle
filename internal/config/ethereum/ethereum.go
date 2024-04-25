@@ -1,18 +1,3 @@
-//  Copyright (C) 2020 Maker Ecosystem Growth Holdings, INC.
-//
-//  This program is free software: you can redistribute it and/or modify
-//  it under the terms of the GNU Affero General Public License as
-//  published by the Free Software Foundation, either version 3 of the
-//  License, or (at your option) any later version.
-//
-//  This program is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//  GNU Affero General Public License for more details.
-//
-//  You should have received a copy of the GNU Affero General Public License
-//  along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
 package ethereum
 
 import (
@@ -32,21 +17,16 @@ import (
 	"github.com/toknowwhy/theunit-oracle/pkg/ethereum/geth"
 )
 
-const splitterVirtualHost = "makerdao-splitter"
+const splitterVirtualHost = "unit-splitter"
 
 var ethClientFactory = func(endpoints []string) (geth.EthClient, error) {
-	fmt.Println("aaa", endpoints)
 	switch len(endpoints) {
 	case 0:
-		fmt.Println("aaa1")
 		return nil, errors.New("missing address to a RPC client in the configuration file")
 	case 1:
-		fmt.Println("aaa2", endpoints[0])
 		return ethclient.Dial(endpoints[0])
 	default:
 		// TODO: pass logger
-		fmt.Println("aaa3")
-		fmt.Println("aaa")
 		splitter, err := rpcsplitter.NewTransport(endpoints, splitterVirtualHost, nil, null.New())
 
 		if err != nil {

@@ -3,20 +3,25 @@ package origins
 import (
 	"encoding/json"
 	"fmt"
-	"time"
-
 	"github.com/toknowwhy/theunit-oracle/internal/query"
+	"time"
 )
 
-const okexURL = "https://www.okex.com/api/spot/v3/instruments/ticker"
+// const okexURL = "https://www.okex.com/api/spot/v3/instruments/ticker"
+const okexURL = "https://www.okx.com/api/v5/market/tickers?instType=SPOT"
 
 type okexResponse struct {
-	InstrumentID  string          `json:"instrument_id"`
+	InstrumentID  string          `json:"instId"`
 	Last          stringAsFloat64 `json:"last"`
-	BestAsk       stringAsFloat64 `json:"best_ask"`
-	BestBid       stringAsFloat64 `json:"best_bid"`
-	BaseVolume24H stringAsFloat64 `json:"base_volume_24h"`
-	Timestamp     time.Time       `json:"timestamp"`
+	BestAsk       stringAsFloat64 `json:"askPx"`
+	BestBid       stringAsFloat64 `json:"bidPx"`
+	BaseVolume24H stringAsFloat64 `json:"volCcy24h"`
+	Timestamp     string          `json:"ts"`
+}
+
+type okexV5Response struct {
+	Code string         `json:"code"`
+	Data []okexResponse `json:"data"`
 }
 
 // Okex origin handler
@@ -47,7 +52,8 @@ func (o Okex) PullPrices(pairs []Pair) []FetchResult {
 	}
 
 	// parse JSON
-	var resp []okexResponse
+	//var resp []okexResponse
+	resp := okexV5Response{}
 	err = json.Unmarshal(res.Body, &resp)
 	if err != nil {
 		return fetchResultListWithErrors(pairs, fmt.Errorf("failed to parse Okex response: %w", err))
@@ -55,7 +61,8 @@ func (o Okex) PullPrices(pairs []Pair) []FetchResult {
 
 	// convert response from a slice to a map
 	respMap := map[string]okexResponse{}
-	for _, symbolResp := range resp {
+
+	for _, symbolResp := range resp.Data {
 		respMap[symbolResp.InstrumentID] = symbolResp
 	}
 
@@ -68,6 +75,13 @@ func (o Okex) PullPrices(pairs []Pair) []FetchResult {
 				Error: ErrMissingResponseForPair,
 			})
 		} else {
+			//ti, err := strconv.Atoi(r.Timestamp)
+			//if err != nil {
+			//	//fmt.Println("Error converting string to int:", err)
+			//	return fetchResultListWithErrors(pairs, fmt.Errorf("failed to parse Okex response: %w", err))
+			//}
+			//t := time.Unix(int64(ti), 0)
+
 			results = append(results, FetchResult{
 				Price: Price{
 					Pair:      pair,
@@ -75,7 +89,7 @@ func (o Okex) PullPrices(pairs []Pair) []FetchResult {
 					Bid:       r.BestBid.val(),
 					Ask:       r.BestAsk.val(),
 					Volume24h: r.BaseVolume24H.val(),
-					Timestamp: r.Timestamp,
+					Timestamp: time.Now(),
 				},
 			})
 		}

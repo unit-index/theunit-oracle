@@ -33,12 +33,14 @@ func (b Binance) Pool() query.WorkerPool {
 
 func (b Binance) PullPrices(pairs []Pair) []FetchResult {
 	var err error
+
 	req := &query.HTTPRequest{
 		URL: binanceURL,
 	}
 
 	// make query
 	res := b.WorkerPool.Query(req)
+
 	if res == nil {
 		return fetchResultListWithErrors(pairs, ErrEmptyOriginResponse)
 	}
