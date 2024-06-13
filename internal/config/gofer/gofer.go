@@ -47,10 +47,11 @@ func (e ErrCyclicReference) Error() string {
 }
 
 type Gofer struct {
-	RPC         RPC                   `json:"rpc"`
-	EthRPC      string                `json:"ethRpc"`
-	Origins     map[string]Origin     `json:"origins"`
-	PriceModels map[string]PriceModel `json:"priceModels"`
+	RPC                     RPC                   `json:"rpc"`
+	EthRPC                  string                `json:"ethRpc"`
+	Origins                 map[string]Origin     `json:"origins"`
+	PriceModels             map[string]PriceModel `json:"priceModels"`
+	CirculatingSupplyModels map[string]PriceModel `json:"circulatingSupplyModels"`
 }
 
 type RPC struct {
@@ -70,6 +71,11 @@ type PriceModel struct {
 	TTL     int             `json:"ttl"`
 }
 
+type CirculatingSupplyModel struct {
+	Method  string                      `json:"method"`
+	Sources [][]CirculatingSupplySource `json:"sources"`
+}
+
 type MedianPriceModel struct {
 	MinSourceSuccess int `json:"minimumSuccessfulSources"`
 }
@@ -78,6 +84,11 @@ type Source struct {
 	Origin string `json:"origin"`
 	Pair   string `json:"pair"`
 	TTL    int    `json:"ttl"`
+}
+
+type CirculatingSupplySource struct {
+	Origin string `json:"origin"`
+	APIKey string `json:"APIKey"`
 }
 
 func (c *Gofer) ConfigureGofer(

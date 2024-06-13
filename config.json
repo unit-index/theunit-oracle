@@ -172,13 +172,6 @@
     ]
   },
   "gofer": {
-    "supply": {
-      "token": [
-        "BTC",
-        "ETH",
-        "LTC"
-      ]
-    },
     "ethRpc": "https://eth.llamarpc.com",
     "rpc": {
       "disable": true,
@@ -298,7 +291,22 @@
         }
       }
     },
+    "circulatingSupplyModels": {
+      "BTC": {
+        "method": "median",
+        "sources": [{"origin": "coingecko", "apiKey": "ii7fRPp8ky22cwBm3qEianQs"}]
+      }
+    },
     "priceModels": {
+      "BTC/UNIT": {
+        "method": "median",
+        "sources": [
+          [{ "origin": "local", "pair": "BTC/UNIT" }]
+        ],
+        "params": {
+          "minimumSuccessfulSources": 1
+        }
+      },
       "BTC/USD": {
         "method": "median",
         "sources": [

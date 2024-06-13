@@ -14,6 +14,7 @@ type Pair struct {
 
 type Token struct {
 	Symbol string
+	CS     string
 }
 
 // NewPair returns a new Pair for given string. The string must be formatted
@@ -43,7 +44,7 @@ func NewPairs(s ...string) ([]Pair, error) {
 func NewToken(s ...string) ([]Token, error) {
 	var t []Token
 	for _, p := range s {
-		to := Token{p}
+		to := Token{p, "0"}
 		t = append(t, to)
 	}
 	return t, nil
