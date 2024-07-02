@@ -106,8 +106,6 @@ type Gofer interface {
 	Prices(pairs ...Pair) (map[Pair]*Price, error)
 	// Pairs returns all pairs.
 	Pairs() ([]Pair, error)
-
-	TokenTotalSupply(token []Token) (float64, error)
 }
 
 // StartableGofer interface represents a Gofer instances that have to be

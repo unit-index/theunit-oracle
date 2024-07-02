@@ -47,7 +47,6 @@ func (c *CoinbasePro) callOne(pair Pair) (*Price, error) {
 	req := &query.HTTPRequest{
 		URL: c.getURL(pair),
 	}
-
 	// make query
 	res := c.Pool().Query(req)
 	if res == nil {

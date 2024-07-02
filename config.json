@@ -294,14 +294,16 @@
     "circulatingSupplyModels": {
       "BTC": {
         "method": "median",
-        "sources": [{"origin": "coingecko", "apiKey": "ii7fRPp8ky22cwBm3qEianQs"}]
+        "sources":[
+          [{"origin": "coingecko", "apiKey": "ii7fRPp8ky22cwBm3qEianQs"}]
+        ]
       }
     },
     "priceModels": {
       "BTC/UNIT": {
         "method": "median",
         "sources": [
-          [{ "origin": "local", "pair": "BTC/UNIT" }]
+          [{ "origin": "coingecko", "pair": "BTC/UNIT" }]
         ],
         "params": {
           "minimumSuccessfulSources": 1
@@ -437,5 +439,25 @@
         }
       }
     }
+  },
+  "unit": {
+    "circulatingSupplySource": [
+      {
+        "origin": "coingecko",
+        "key": "CG-ii7fRPp8ky22cwBm3qEianQs"
+      }
+    ],
+    "tokens": [
+      {
+        "name": "Bitcoin",
+        "symbol": "BTC",
+        "circulatingSupplySource": "coingecko"
+      },
+      {
+        "name": "Ethereum",
+        "symbol": "ETH",
+        "circulatingSupplySource": "coingecko"
+      }
+    ]
   }
 }

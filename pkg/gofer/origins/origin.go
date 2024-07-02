@@ -137,6 +137,12 @@ func (p Pair) Equal(c Pair) bool {
 	return p.Base == c.Base && p.Quote == c.Quote
 }
 
+type Token struct {
+	Symbol string
+	Name   string
+	Supply string
+}
+
 type Price struct {
 	Pair      Pair
 	Price     float64
@@ -210,7 +216,6 @@ func (e *Set) Fetch(originPairs map[string][]Pair) map[string][]FetchResult {
 	ch := make(chan struct{}, e.goroutines)
 
 	wg.Add(len(originPairs))
-
 	frs := map[string][]FetchResult{}
 	for origin, pairs := range originPairs {
 		ch <- struct{}{}

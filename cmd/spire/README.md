@@ -17,7 +17,7 @@ Alternatively, you can build Spire using `Makefile` directly from the repository
 
 ```bash
 git clone https://github.com/toknowwhy/theunit-oracle.git
-cd oracle-suite
+cd theunit-oracle
 make
 ```
 

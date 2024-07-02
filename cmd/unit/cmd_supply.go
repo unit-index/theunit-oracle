@@ -4,19 +4,19 @@ import (
 	"context"
 	"fmt"
 	"github.com/spf13/cobra"
-	"github.com/toknowwhy/theunit-oracle/pkg/gofer"
+	"github.com/toknowwhy/theunit-oracle/pkg/unit"
 	"os"
 )
 
 func NewSupplyCmd(opts *options) *cobra.Command {
 	return &cobra.Command{
 		Use:     "supply [Token ...]",
-		Aliases: []string{"supply"},
+		Aliases: []string{"prices"},
 		Args:    cobra.MinimumNArgs(0),
 		Short:   "Return supply for given TOKEN",
 		Long:    `Return supply for given TOKEN.`,
 		RunE: func(c *cobra.Command, args []string) (err error) {
-			srv, err := PrepareGoferClientServices(context.Background(), opts)
+			srv, err := PrepareUnitClientServices(context.Background(), opts)
 			if err != nil {
 				return err
 			}
@@ -34,16 +34,22 @@ func NewSupplyCmd(opts *options) *cobra.Command {
 			}
 			defer srv.CancelAndWait()
 
-			tokens, err := gofer.NewToken(args...)
+			fmt.Println(args)
+
+			tokens, err := unit.NewTokens(args...)
 			if err != nil {
 				return err
 			}
-
+			//
 			fmt.Println(tokens)
-			//supply, err := srv.Gofer.TokenTotalSupply(tokens)
+
+			//supply, err := srv.Unit.TokenTotalSupply(tokens)
 			//if err != nil {
 			//	return err
 			//}
+			//fmt.Println(supply)
+			//supply, err := srv.Gofer.TokenTotalSupply(tokens)
+
 			//fmt.Println(supply)
 			//for _, p := range supply {
 			//	if mErr := srv.Marshaller.Write(os.Stdout, p); mErr != nil {

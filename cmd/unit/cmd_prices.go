@@ -2,21 +2,19 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"github.com/spf13/cobra"
-	"github.com/toknowwhy/theunit-oracle/pkg/gofer"
 	"os"
 )
 
-func NewSupplyCmd(opts *options) *cobra.Command {
+func NewPriceCmd(opts *options) *cobra.Command {
 	return &cobra.Command{
-		Use:     "supply [Token ...]",
-		Aliases: []string{"supply"},
+		Use:     "prices [Token ...]",
+		Aliases: []string{"prices"},
 		Args:    cobra.MinimumNArgs(0),
-		Short:   "Return supply for given TOKEN",
-		Long:    `Return supply for given TOKEN.`,
+		Short:   "Return prices for given TOKEN",
+		Long:    `Return prices for given TOKEN.`,
 		RunE: func(c *cobra.Command, args []string) (err error) {
-			srv, err := PrepareGoferClientServices(context.Background(), opts)
+			srv, err := PrepareUnitClientServices(context.Background(), opts)
 			if err != nil {
 				return err
 			}
@@ -34,12 +32,12 @@ func NewSupplyCmd(opts *options) *cobra.Command {
 			}
 			defer srv.CancelAndWait()
 
-			tokens, err := gofer.NewToken(args...)
-			if err != nil {
-				return err
-			}
-
-			fmt.Println(tokens)
+			//tokens, err := unit.NewPair(args...)
+			//if err != nil {
+			//	return err
+			//}
+			//
+			//fmt.Println(tokens)
 			//supply, err := srv.Gofer.TokenTotalSupply(tokens)
 			//if err != nil {
 			//	return err

@@ -51,7 +51,6 @@ func (b *Bitstamp) callOne(pair Pair) (*Price, error) {
 	req := &query.HTTPRequest{
 		URL: b.getURL(pair),
 	}
-
 	// make query
 	res := b.Pool().Query(req)
 	if res == nil {

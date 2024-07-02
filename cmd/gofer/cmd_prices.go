@@ -41,11 +41,13 @@ func NewPricesCmd(opts *options) *cobra.Command {
 			}
 
 			prices, err := srv.Gofer.Prices(pairs...)
+
 			if err != nil {
 				return err
 			}
 
 			for _, p := range prices {
+				//fmt.Println(p)
 				if mErr := srv.Marshaller.Write(os.Stdout, p); mErr != nil {
 					_ = srv.Marshaller.Write(os.Stderr, mErr)
 				}

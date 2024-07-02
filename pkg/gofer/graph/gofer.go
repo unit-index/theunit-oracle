@@ -65,21 +65,18 @@ func (g *Gofer) Prices(pairs ...gofer.Pair) (map[gofer.Pair]*gofer.Price, error)
 	if err != nil {
 		return nil, err
 	}
+
 	if g.feeder != nil {
 		g.feeder.Feed(ns...)
 	}
 	res := make(map[gofer.Pair]*gofer.Price)
+
 	for _, n := range ns {
 		if n, ok := n.(nodes.Aggregator); ok {
 			res[n.Pair()] = mapGraphPrice(n.Price())
 		}
 	}
 	return res, nil
-}
-
-func (g *Gofer) TokenTotalSupply(token []gofer.Token) (float64, error) {
-
-	return 0, nil
 }
 
 // Pairs implements the gofer.Gofer interface.
