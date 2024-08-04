@@ -31,8 +31,6 @@ func NewAccount(keyStorePath, passphrase string, address ethereum.Address) (*Acc
 	}
 
 	ks := keystore.NewKeyStore(keyStorePath, keystore.LightScryptN, keystore.LightScryptP)
-	//fmt.Println("bbbbb", passphrase, address, keyStorePath)
-	//fmt.Println(ks.Accounts())
 
 	w := &Account{
 		accountManager: accounts.NewManager(&accounts.Config{InsecureUnlockAllowed: false}, ks),

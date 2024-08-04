@@ -116,7 +116,7 @@ func PrepareServices(ctx context.Context, opts *options) (*Services, error) {
 		Logger:  logger,
 	}, opts.GoferNoRPC)
 	if err != nil {
-		return nil, fmt.Errorf("failed to load Ghost configuration: %w", err)
+		return nil, fmt.Errorf(" origin with namefailed to load Ghost configuration: %w", err)
 	}
 
 	return &Services{

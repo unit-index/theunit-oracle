@@ -131,20 +131,23 @@ func (s *Spectre) relay(assetPair string) (*ethereum.Hash, error) {
 	if prices == nil || prices.len() == 0 {
 		return nil, errNoPrices{AssetPair: assetPair}
 	}
-
+	fmt.Println("relay")
 	oracleQuorum, err := pair.Median.Bar(s.ctx)
+	fmt.Println("relay2")
 	if err != nil {
 		return nil, err
 	}
+	fmt.Println("relay2.1")
 	oracleTime, err := pair.Median.Age(s.ctx)
 	if err != nil {
 		return nil, err
 	}
+	fmt.Println("relay2.2")
 	oraclePrice, err := pair.Median.Val(s.ctx)
 	if err != nil {
 		return nil, err
 	}
-
+	fmt.Println("relay3", oracleQuorum, oracleTime, oraclePrice)
 	// Clear expired prices:
 	prices.clearOlderThan(time.Now().Add(-1 * pair.PriceExpiration))
 	prices.clearOlderThan(oracleTime)
@@ -175,8 +178,9 @@ func (s *Spectre) relay(assetPair string) (*ethereum.Hash, error) {
 		s.log.
 			WithFields(price.Fields(s.signer)).
 			Debug("Feed")
-	}
 
+	}
+	//fmt.Println("signer:", s.signer.Address())
 	if isExpired || isStale {
 		// Check if there are enough prices to achieve a quorum:
 		if int64(prices.len()) != oracleQuorum {
@@ -185,6 +189,8 @@ func (s *Spectre) relay(assetPair string) (*ethereum.Hash, error) {
 
 		// Send *actual* transaction to the Ethereum network:
 		tx, err := pair.Median.Poke(s.ctx, prices.oraclePrices(), true)
+		//tx, err := pair.Median.Poke(s.ctx, prices.oraclePrices(), false)
+		//fmt.Println(err)
 		return tx, err
 	}
 

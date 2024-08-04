@@ -40,7 +40,7 @@ func NewSupplyCmd(opts *options) *cobra.Command {
 			if err != nil {
 				return err
 			}
-			//
+
 			fmt.Println(tokens)
 
 			//supply, err := srv.Unit.TokenTotalSupply(tokens)

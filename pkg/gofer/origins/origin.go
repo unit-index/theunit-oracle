@@ -271,6 +271,7 @@ func DefaultOriginSet(pool query.WorkerPool, goroutines int) *Set {
 		"loopring":      NewBaseExchangeHandler(Loopring{WorkerPool: pool}, nil),
 		"okex":          NewBaseExchangeHandler(Okex{WorkerPool: pool}, nil),
 		"upbit":         NewBaseExchangeHandler(Upbit{WorkerPool: pool}, nil),
+		"coingecko":     NewBaseExchangeHandler(Coinbase2Pro{WorkerPool: pool}, nil),
 	}, goroutines)
 }
 

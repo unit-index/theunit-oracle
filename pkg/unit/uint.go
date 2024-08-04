@@ -42,14 +42,6 @@ func NewTokens(s ...string) ([]Token, error) {
 	return t, nil
 }
 
-//func NewPair(s string) (Pair, error) {
-//	ss := strings.Split(s, "/")
-//	if len(ss) != 2 {
-//		return Pair{}, fmt.Errorf("couldn't parse pair \"%s\"", s)
-//	}
-//	return Pair{Base: strings.ToUpper(ss[0]), Quote: strings.ToUpper(ss[1])}, nil
-//}
-
 func NewToken(s string) (Token, error) {
 	ss := strings.Split(s, ":")
 	if len(ss) != 2 {
