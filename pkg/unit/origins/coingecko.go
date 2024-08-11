@@ -1,4 +1,3 @@
-// TODO: check if it's possible to merge coinbase and coinbasepro
 package origins
 
 import (
@@ -10,7 +9,7 @@ import (
 	"strings"
 )
 
-// Coinbase URL
+// CoinGecko URL
 const coinGeckoURL = "https://pro-api.coingecko.com/api/v3/coins/markets"
 
 type coinGeckoResponse struct {
@@ -18,7 +17,7 @@ type coinGeckoResponse struct {
 	LastUpdated       string `json:"last_updated"`
 }
 
-// Coinbase origin handler
+// CoinGecko origin handler
 type CoinGecko struct {
 	WorkerPool query.WorkerPool
 	Key        string
@@ -54,7 +53,7 @@ func (c *CoinGecko) callOne(token unit.Token) (unit.Token, error) {
 	//var resp coinGeckoResponse
 	//err = json.Unmarshal(res.Body, &resp)
 	//if err != nil {
-	//	return &Price{}, fmt.Errorf("failed to parse coinbasepro response: %w", err)
+	//	return &Price{}, fmt.Errorf("failed to parse CoinGecko response: %w", err)
 	//}
 
 	//getCirculatingSupply()
@@ -85,20 +84,8 @@ func (c *CoinGecko) getCirculatingSupply(symbol string, name string) (string, er
 	var resp coinGeckoResponse
 	err = json.Unmarshal(res.Body, &resp)
 	if err != nil {
-		return "0", fmt.Errorf("failed to parse coinbasepro response: %w", err)
+		return "0", fmt.Errorf("failed to parse CoinGecko response: %w", err)
 	}
 
 	return resp.CirculatingSupply, nil
 }
-
-/*
-价格计算公式
-
-var coinPrice = []
-
-for price := coinPrice {
-	(price / lastMonthPrice ) * lastMonthWight
-}
-
-
-*/

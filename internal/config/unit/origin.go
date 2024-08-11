@@ -13,7 +13,7 @@ func NewHandler(
 
 	switch origin {
 	case "coingecko":
-		return origins.NewBaseHandler(&origins.CoinGecko{WorkerPool: wp, Key: key}), nil
+		return origins.NewBaseExchangeHandler(&origins.CoinGecko{WorkerPool: wp, Key: key}), nil
 	}
 
 	return nil, nil

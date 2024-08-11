@@ -1,18 +1,34 @@
 package origins
 
 import (
+	"errors"
+	"fmt"
 	"github.com/toknowwhy/theunit-oracle/internal/query"
-	"github.com/toknowwhy/theunit-oracle/pkg/unit"
+	"sync"
+	"time"
 )
+
+var ErrUnknownOrigin = errors.New("unknown origin")
 
 type Handler interface {
 	// Fetch should implement making API request to origin URL and
 	// collecting/parsing origin data.
-	Fetch(tokens []unit.Token) []float64
+	Fetch(tokens []Token) []FetchResult
 }
 
 type ExchangeHandler interface {
 	getCirculatingSupply(symbol string, name string) (string, error)
+}
+
+type CSupply struct {
+	Token     Token
+	CSupply   float64
+	Timestamp time.Time
+}
+
+type FetchResult struct {
+	CSupply CSupply
+	Error   error
 }
 
 type BaseExchangeHandler struct {
@@ -28,7 +44,16 @@ func (e *Set) SetHandler(name string, handler Handler) {
 	e.list[name] = handler
 }
 
-func NewBaseHandler(handler ExchangeHandler) Handler {
+func (p Token) Equal(c Token) bool {
+	return p.Name == c.Name && p.Symbol == c.Symbol
+}
+
+type Token struct {
+	Name   string
+	Symbol string
+}
+
+func NewBaseHandler(handler ExchangeHandler) ExchangeHandler {
 	return &BaseExchangeHandler{ExchangeHandler: handler}
 }
 
@@ -38,7 +63,7 @@ func NewBaseExchangeHandler(handler ExchangeHandler) *BaseExchangeHandler {
 	}
 }
 
-func (h BaseExchangeHandler) Fetch(tokens []unit.Token) []float64 {
+func (h BaseExchangeHandler) Fetch(tokens []Token) []FetchResult {
 	//if h.aliases == nil {
 	//	return h.PullPrices(pairs)
 	//}
@@ -54,7 +79,60 @@ func (h BaseExchangeHandler) Fetch(tokens []unit.Token) []float64 {
 	//	results[i].Price.Pair = h.aliases.revertPair(results[i].Price.Pair)
 	//}
 	//return results
-	return []float64{}
+	return []FetchResult{}
+}
+
+func (e *Set) Fetch(originTokens map[string][]Token) map[string][]FetchResult {
+	var mu sync.Mutex
+	var wg sync.WaitGroup
+	ch := make(chan struct{}, e.goroutines)
+
+	wg.Add(len(originTokens))
+
+	frs := map[string][]FetchResult{}
+	for origin, tokens := range originTokens {
+		ch <- struct{}{}
+
+		origin, tokens := origin, tokens
+		handler, ok := e.list[origin]
+
+		go func() {
+			defer func() { <-ch }()
+
+			if !ok {
+				mu.Lock()
+				frs[origin] = fetchResultListWithErrors(
+					tokens,
+					fmt.Errorf("%w (%s)", ErrUnknownOrigin, origin),
+				)
+				mu.Unlock()
+			} else {
+				resp := handler.Fetch(tokens)
+				mu.Lock()
+				frs[origin] = append(frs[origin], resp...)
+				mu.Unlock()
+			}
+
+			wg.Done()
+		}()
+	}
+
+	wg.Wait()
+	return frs
+}
+
+func fetchResultListWithErrors(tokens []Token, err error) []FetchResult {
+	r := make([]FetchResult, len(tokens))
+	for i, token := range tokens {
+		r[i] = FetchResult{
+			CSupply: CSupply{
+				Token:     token,
+				Timestamp: time.Now(),
+			},
+			Error: err,
+		}
+	}
+	return r
 }
 
 func NewSet(list map[string]Handler, goroutines int) *Set {

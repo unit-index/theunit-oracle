@@ -2,7 +2,9 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"github.com/spf13/cobra"
+	"github.com/toknowwhy/theunit-oracle/pkg/unit"
 	"os"
 )
 
@@ -32,17 +34,17 @@ func NewPriceCmd(opts *options) *cobra.Command {
 			}
 			defer srv.CancelAndWait()
 
-			//tokens, err := unit.NewPair(args...)
-			//if err != nil {
-			//	return err
-			//}
+			tokens, err := unit.NewTokens(args...)
+			if err != nil {
+				return err
+			}
 			//
-			//fmt.Println(tokens)
-			//supply, err := srv.Gofer.TokenTotalSupply(tokens)
-			//if err != nil {
-			//	return err
-			//}
-			//fmt.Println(supply)
+			fmt.Println(tokens)
+			supply, err := srv.Unit.TokensTotalSupply(tokens...)
+			if err != nil {
+				return err
+			}
+			fmt.Println(supply)
 			//for _, p := range supply {
 			//	if mErr := srv.Marshaller.Write(os.Stdout, p); mErr != nil {
 			//		_ = srv.Marshaller.Write(os.Stderr, mErr)

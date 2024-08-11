@@ -3,6 +3,7 @@ package unit
 import (
 	"fmt"
 	"strings"
+	"time"
 )
 
 /*
@@ -16,14 +17,22 @@ for price := coinPrice {
 */
 
 type Token struct {
-	Name           string
-	Symbol         string
-	Price          float64
-	lastMonthPrice float64
-	lastMonthWight float64
+	Name   string
+	Symbol string
+}
+
+type CSupply struct {
+	CSupply    float64
+	Type       string
+	Parameters map[string]string
+	Time       time.Time
+	Token      Token
+	Error      string
+	CSupplys   []*CSupply
 }
 type Unit interface {
-	//TokenTotalSupply([]Token)
+	TokenTotalSupply(tokens Token) (*CSupply, error)
+	TokensTotalSupply(tokens ...Token) (map[Token]*CSupply, error)
 }
 
 func calculationUNIT(tokens []Token) {
@@ -35,11 +44,22 @@ func calculationUNIT(tokens []Token) {
 
 func NewTokens(s ...string) ([]Token, error) {
 	var t []Token
-	for _, symbol := range s {
-		to := Token{Symbol: symbol}
-		t = append(t, to)
+	for _, p := range s {
+		pr, err := NewToken(p)
+		if err != nil {
+			return nil, err
+		}
+		t = append(t, pr)
 	}
 	return t, nil
+}
+
+func (p Token) String() string {
+	return fmt.Sprintf("%s-%s", p.Name, p.Symbol)
+}
+
+func (p Token) Equal(c Token) bool {
+	return p.Name == c.Name && p.Symbol == c.Symbol
 }
 
 func NewToken(s string) (Token, error) {
