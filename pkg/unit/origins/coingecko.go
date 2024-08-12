@@ -5,16 +5,16 @@ import (
 	"fmt"
 	"github.com/toknowwhy/theunit-oracle/internal/query"
 	"github.com/toknowwhy/theunit-oracle/pkg/gofer/origins"
-	"github.com/toknowwhy/theunit-oracle/pkg/unit"
 	"strings"
+	"time"
 )
 
 // CoinGecko URL
 const coinGeckoURL = "https://pro-api.coingecko.com/api/v3/coins/markets"
 
 type coinGeckoResponse struct {
-	CirculatingSupply string `json:"circulating_supply"`
-	LastUpdated       string `json:"last_updated"`
+	CirculatingSupply float64 `json:"circulating_supply"`
+	LastUpdated       string  `json:"last_updated"`
 }
 
 // CoinGecko origin handler
@@ -24,68 +24,55 @@ type CoinGecko struct {
 }
 
 func (c *CoinGecko) localPairName(symbol string, name string) string {
-	return fmt.Sprintf("?vs_currency=%s&ids=%s", strings.ToLower(symbol), strings.ToLower(name))
+	return fmt.Sprintf("vs_currency=%s&ids=%s", symbol, name)
 }
 
 func (c *CoinGecko) getURL(symbol string, name string) string {
-	return fmt.Sprintf(coinGeckoURL, c.localPairName(symbol, name))
+	return fmt.Sprintf("%s?%s", coinGeckoURL, c.localPairName(strings.ToLower(symbol), (strings.ToLower(name))))
 }
 
 func (c CoinGecko) Pool() query.WorkerPool {
 	return c.WorkerPool
 }
 
-func (c *CoinGecko) callOne(token unit.Token) (unit.Token, error) {
-	//var err error
-	//req := &query.HTTPRequest{
-	//	URL: c.getURL(pair),
-	//}
-	//
-	//// make query
-	//res := c.Pool().Query(req)
-	//if res == nil {
-	//	return &Price{}, ErrEmptyOriginResponse
-	//}
-	//if res.Error != nil {
-	//	return &Price{}, res.Error
-	//}
-	//// parsing JSON
-	//var resp coinGeckoResponse
-	//err = json.Unmarshal(res.Body, &resp)
-	//if err != nil {
-	//	return &Price{}, fmt.Errorf("failed to parse CoinGecko response: %w", err)
-	//}
-
-	//getCirculatingSupply()
-
-	//price := float64(0)
-	//volume := float64(0)
-	//ask := float64(0)
-	//bid := float64(0)
-
-	return token, nil
-}
-
-func (c *CoinGecko) getCirculatingSupply(symbol string, name string) (string, error) {
+func (c *CoinGecko) callOne(token Token) (*CSupply, error) {
 	var err error
 	req := &query.HTTPRequest{
-		URL: c.getURL(symbol, name),
+		URL: c.getURL(token.Symbol, token.Name),
+		Headers: map[string]string{
+			"x-cg-pro-api-key": "CG-ii7fRPp8ky22cwBm3qEianQs",
+			"accept":           "application/json",
+		},
 	}
 
-	// make query
 	res := c.Pool().Query(req)
+
 	if res == nil {
-		return "0", origins.ErrEmptyOriginResponse
+		return nil, origins.ErrEmptyOriginResponse
 	}
 	if res.Error != nil {
-		return "0", res.Error
-	}
-	// parsing JSON
-	var resp coinGeckoResponse
-	err = json.Unmarshal(res.Body, &resp)
-	if err != nil {
-		return "0", fmt.Errorf("failed to parse CoinGecko response: %w", err)
+		return nil, res.Error
 	}
 
-	return resp.CirculatingSupply, nil
+	var resp []coinGeckoResponse
+	err = json.Unmarshal(res.Body, &resp)
+
+	if err != nil {
+		return nil, fmt.Errorf("failed to parse CoinGecko response: %w", err)
+	}
+
+	CirculatingSupply := resp[0].CirculatingSupply
+	if err != nil {
+		return nil, fmt.Errorf("failed to parse CirculatingSupply float64: %w", err)
+	}
+
+	return &CSupply{
+		Token:     token,
+		CSupply:   CirculatingSupply,
+		Timestamp: time.Now(),
+	}, nil
+}
+
+func (c *CoinGecko) getCirculatingSupply(tokens []Token) []FetchResult {
+	return callSinglePairOrigin(c, tokens)
 }

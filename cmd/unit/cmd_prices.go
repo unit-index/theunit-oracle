@@ -39,17 +39,18 @@ func NewPriceCmd(opts *options) *cobra.Command {
 				return err
 			}
 			//
-			fmt.Println(tokens)
+			fmt.Println("tokens:", tokens)
 			supply, err := srv.Unit.TokensTotalSupply(tokens...)
 			if err != nil {
 				return err
 			}
-			fmt.Println(supply)
-			//for _, p := range supply {
-			//	if mErr := srv.Marshaller.Write(os.Stdout, p); mErr != nil {
-			//		_ = srv.Marshaller.Write(os.Stderr, mErr)
-			//	}
-			//}
+			fmt.Println("supply", supply)
+			for _, p := range supply {
+				fmt.Println(p)
+				if mErr := srv.Marshaller.Write(os.Stdout, p); mErr != nil {
+					_ = srv.Marshaller.Write(os.Stderr, mErr)
+				}
+			}
 			//
 			//// If any pair was returned with an error, then we should return a non-zero status code.
 			//for _, p := range prices {

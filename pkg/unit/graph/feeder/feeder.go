@@ -2,6 +2,7 @@ package feeder
 
 import (
 	"context"
+	"fmt"
 	"github.com/hashicorp/go-multierror"
 	"github.com/toknowwhy/theunit-oracle/pkg/log"
 	"github.com/toknowwhy/theunit-oracle/pkg/unit"
@@ -124,6 +125,7 @@ func (f *Feeder) findFeedableNodes(ns []nodes.Node, t time.Time) []Feedable {
 }
 
 func (f *Feeder) Feed(ns ...nodes.Node) Warnings {
+	fmt.Println("ns", ns, f.findFeedableNodes(ns, time.Now()))
 	return f.fetchSupplyAndPriceThemToFeedableNodes(f.findFeedableNodes(ns, time.Now()))
 }
 
@@ -137,7 +139,6 @@ func (f *Feeder) fetchSupplyAndPriceThemToFeedableNodes(ns []Feedable) Warnings 
 
 	nodesMap := map[originToken][]Feedable{}
 	tokensMap := map[string][]origins.Token{}
-
 	for _, n := range ns {
 		op := originToken{
 			origin: n.OriginToken().Origin,

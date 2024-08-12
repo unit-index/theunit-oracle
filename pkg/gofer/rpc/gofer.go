@@ -3,7 +3,6 @@ package rpc
 import (
 	"context"
 	"errors"
-	"fmt"
 	"net/rpc"
 
 	"github.com/toknowwhy/theunit-oracle/pkg/gofer"
@@ -91,7 +90,6 @@ func (g *Gofer) Prices(pairs ...gofer.Pair) (map[gofer.Pair]*gofer.Price, error)
 }
 
 func (g *Gofer) TokenTotalSupply(token []gofer.Token) (float64, error) {
-	fmt.Println("aaaa", token)
 	if g.rpc == nil {
 		return 0, ErrNotStarted
 	}

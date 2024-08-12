@@ -17,7 +17,7 @@ type Handler interface {
 }
 
 type ExchangeHandler interface {
-	getCirculatingSupply(symbol string, name string) (string, error)
+	getCirculatingSupply(tokens []Token) []FetchResult
 }
 
 type CSupply struct {
@@ -69,17 +69,17 @@ func (h BaseExchangeHandler) Fetch(tokens []Token) []FetchResult {
 	//}
 	//
 	//var renamedPairs []Pair
-	//for _, pair := range pairs {
+	//for _, token := range tokens {
 	//	renamedPairs = append(renamedPairs, h.aliases.replacePair(pair))
 	//}
-	//results := h.PullPrices(renamedPairs)
-	//
+	results := h.getCirculatingSupply(tokens)
+
 	//// Reverting our replacement
 	//for i := range results {
 	//	results[i].Price.Pair = h.aliases.revertPair(results[i].Price.Pair)
 	//}
-	//return results
-	return []FetchResult{}
+	return results
+	//return []FetchResult{}
 }
 
 func (e *Set) Fetch(originTokens map[string][]Token) map[string][]FetchResult {
@@ -88,7 +88,6 @@ func (e *Set) Fetch(originTokens map[string][]Token) map[string][]FetchResult {
 	ch := make(chan struct{}, e.goroutines)
 
 	wg.Add(len(originTokens))
-
 	frs := map[string][]FetchResult{}
 	for origin, tokens := range originTokens {
 		ch <- struct{}{}
@@ -141,4 +140,28 @@ func NewSet(list map[string]Handler, goroutines int) *Set {
 
 func DefaultOriginSet(_ query.WorkerPool, goroutines int) *Set {
 	return NewSet(map[string]Handler{}, goroutines)
+}
+
+type singleTokenOrigin interface {
+	callOne(token Token) (*CSupply, error)
+}
+
+func callSinglePairOrigin(e singleTokenOrigin, tokens []Token) []FetchResult {
+	crs := make([]FetchResult, 0)
+	for _, token := range tokens {
+		cSupply, err := e.callOne(token)
+		if err != nil {
+			crs = append(crs, FetchResult{
+				CSupply: CSupply{Token: token},
+				Error:   err,
+			})
+		} else {
+			crs = append(crs, FetchResult{
+				CSupply: *cSupply,
+				Error:   err,
+			})
+		}
+	}
+
+	return crs
 }

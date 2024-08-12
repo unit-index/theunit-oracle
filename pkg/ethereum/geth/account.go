@@ -2,7 +2,6 @@ package geth
 
 import (
 	"errors"
-	"fmt"
 	"os"
 	"runtime"
 
@@ -58,13 +57,11 @@ func (s *Account) Passphrase() string {
 func (s *Account) findAccountByAddress(from ethereum.Address) (accounts.Wallet, *accounts.Account, error) {
 	for _, wallet := range s.accountManager.Wallets() {
 		for _, account := range wallet.Accounts() {
-			fmt.Println(account.Address)
 			if account.Address == from {
 				return wallet, &account, nil
 			}
 		}
 	}
-	//fmt.Println("aaaaaa", from)
 	return nil, nil, ErrMissingAccount
 }
 
