@@ -34,21 +34,25 @@ func NewSupplyCmd(opts *options) *cobra.Command {
 			}
 			defer srv.CancelAndWait()
 
-			fmt.Println(args)
-
 			tokens, err := unit.NewTokens(args...)
 			if err != nil {
 				return err
 			}
+			//fmt.Println("tokens:", tokens)
+			supply, err := srv.Unit.TokensTotalSupply(tokens...)
+			if err != nil {
 
-			fmt.Println(tokens)
-
-			//supply, err := srv.Unit.TokenTotalSupply(tokens)
-			//if err != nil {
-			//	return err
-			//}
-			//fmt.Println(supply)
-			//supply, err := srv.Gofer.TokenTotalSupply(tokens)
+				return err
+			}
+			//fmt.Println("supply", supply)
+			for _, p := range supply {
+				fmt.Println(p)
+				if mErr := srv.Marshaller.Write(os.Stdout, p); mErr != nil {
+					_ = srv.Marshaller.Write(os.Stderr, mErr)
+				}
+			}
+			//supply, err := srv.Gof
+			//er.TokenTotalSupply(tokens)
 
 			//fmt.Println(supply)
 			//for _, p := range supply {

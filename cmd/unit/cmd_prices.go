@@ -38,7 +38,6 @@ func NewPriceCmd(opts *options) *cobra.Command {
 			if err != nil {
 				return err
 			}
-			//
 			fmt.Println("tokens:", tokens)
 			supply, err := srv.Unit.TokensTotalSupply(tokens...)
 			if err != nil {

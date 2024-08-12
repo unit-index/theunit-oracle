@@ -2,6 +2,7 @@ package marshal
 
 import (
 	"fmt"
+	"github.com/toknowwhy/theunit-oracle/pkg/unit"
 	"io"
 	"strings"
 
@@ -29,6 +30,8 @@ func (p *plain) Write(writer io.Writer, item interface{}) error {
 		i = p.handlePrice(typedItem)
 	case *gofer.Model:
 		i = p.handleModel(typedItem)
+	case *unit.CSupply:
+		i = p.handleSupply(typedItem)
 	case error:
 		i = []byte(fmt.Sprintf("Error: %s", typedItem.Error()))
 	default:
@@ -64,4 +67,8 @@ func (*plain) handlePrice(price *gofer.Price) []byte {
 
 func (*plain) handleModel(node *gofer.Model) []byte {
 	return []byte(node.Pair.String())
+}
+
+func (*plain) handleSupply(node *unit.CSupply) []byte {
+	return []byte(fmt.Sprintf("%s:%s", node.Token.String(), node.CSupply))
 }
