@@ -131,23 +131,18 @@ func (s *Spectre) relay(assetPair string) (*ethereum.Hash, error) {
 	if prices == nil || prices.len() == 0 {
 		return nil, errNoPrices{AssetPair: assetPair}
 	}
-	fmt.Println("relay")
 	oracleQuorum, err := pair.Median.Bar(s.ctx)
-	fmt.Println("relay2")
 	if err != nil {
 		return nil, err
 	}
-	fmt.Println("relay2.1")
 	oracleTime, err := pair.Median.Age(s.ctx)
 	if err != nil {
 		return nil, err
 	}
-	fmt.Println("relay2.2")
 	oraclePrice, err := pair.Median.Val(s.ctx)
 	if err != nil {
 		return nil, err
 	}
-	fmt.Println("relay3", oracleQuorum, oracleTime, oraclePrice)
 	// Clear expired prices:
 	prices.clearOlderThan(time.Now().Add(-1 * pair.PriceExpiration))
 	prices.clearOlderThan(oracleTime)

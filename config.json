@@ -325,26 +325,27 @@
       }
     ],
     "interval": 1,
+    "feedAddress": "0x93Cfa7c448345A6DF619E7AecfCf18C5bd7AD75E",
     "tokens": [
       {
         "name": "Bitcoin",
         "symbol": "BTC",
         "method": "median",
+        "address": "0x2f2a2543B76A4166549F7aaB2e75Bef0aefC5B0f",
         "minimumSuccessfulSources": 1,
         "circulatingSupplySource": [
           "coingecko"
-        ],
-        "feedAddress": "0x1078a03f2B9204B24cb64f6264a2a72e45C9CEa2"
+        ]
       },
       {
         "name": "Ethereum",
         "symbol": "ETH",
         "method": "median",
+        "address": "0x82aF49447D8a07e3bd95BD0d56f35241523fBab1",
         "minimumSuccessfulSources": 1,
         "circulatingSupplySource": [
           "coingecko"
-        ],
-        "feedAddress": "0x1078a03f2B9204B24cb64f6264a2a72e45C9CEa2"
+        ]
       }
     ]
   }

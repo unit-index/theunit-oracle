@@ -30,16 +30,18 @@ type CSupply struct {
 	Error      string
 	CSupplys   []*CSupply
 }
+
+type UnitPerMonthParams struct {
+	CSupply       float64
+	LastMarketCap float64
+	LastPrice     float64
+}
+
 type Unit interface {
 	TokenTotalSupply(tokens Token) (*CSupply, error)
 	TokensTotalSupply(tokens ...Token) (map[Token]*CSupply, error)
-}
-
-func calculationUNIT(tokens []Token) {
-	//var count = 0
-	//for _, token := range tokens {
-	//	count = token.Price / token.lastMonthPrice * token.lastMonthWight
-	//}
+	Price() (string, error)
+	FeedMarketCapAndPrice(tokens ...Token) ([]UnitPerMonthParams, error)
 }
 
 func NewTokens(s ...string) ([]Token, error) {

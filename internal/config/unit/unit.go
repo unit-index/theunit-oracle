@@ -3,9 +3,12 @@ package unit
 import (
 	"context"
 	"fmt"
+	"github.com/ethereum/go-ethereum/common"
 	"github.com/toknowwhy/theunit-oracle/internal/query"
 	pkgEthereum "github.com/toknowwhy/theunit-oracle/pkg/ethereum"
+	"github.com/toknowwhy/theunit-oracle/pkg/gofer"
 	"github.com/toknowwhy/theunit-oracle/pkg/log"
+	"github.com/toknowwhy/theunit-oracle/pkg/oracle/geth"
 	"github.com/toknowwhy/theunit-oracle/pkg/unit"
 	"github.com/toknowwhy/theunit-oracle/pkg/unit/graph"
 	"github.com/toknowwhy/theunit-oracle/pkg/unit/graph/feeder"
@@ -60,6 +63,7 @@ type Token struct {
 	Name                     string   `json:"name"`
 	Symbol                   string   `json:"symbol"`
 	Method                   string   `json:"method"`
+	Address                  string   `json:"address"`
 	MinimumSuccessfulSources int      `json:"minimumSuccessfulSources"`
 	CirculatingSupplySource  []string `json:"circulatingSupplySource"`
 	TTL                      int      `json:"ttl"`
@@ -68,6 +72,7 @@ type Token struct {
 type Unit struct {
 	Tokens                  []Token                   `json:"tokens"`
 	CirculatingSupplySource []CirculatingSupplySource `json:"circulatingSupplySource"`
+	FeedAddress             string                    `json:"feedAddress"`
 }
 
 func (u *Unit) Configure() {
@@ -78,14 +83,24 @@ func (u *Unit) TokenTotalSupply(tokens []unit.Token) {
 
 }
 
-func (u *Unit) ConfigureUnit(ctx context.Context, cli pkgEthereum.Client, logger log.Logger, noRPC bool) (unit.Unit, error) {
+func (u *Unit) ConfigureUnit(ctx context.Context, cli pkgEthereum.Client, gofer gofer.Gofer, logger log.Logger, noRPC bool) (unit.Unit, error) {
 	gra, err := u.buildGraphs()
 	originSet, err := u.buildOrigins()
 	if err != nil {
 		return nil, err
 	}
 	fed := feeder.NewFeeder(ctx, originSet, logger)
-	unit := graph.NewUnit(gra, fed)
+
+	feedAddress := pkgEthereum.HexToAddress(u.FeedAddress)
+	unitAlgorithm := geth.NewUnitAlgorithm(cli, feedAddress)
+
+	var tokens = make(map[common.Address]unit.Token)
+	for _, token := range u.Tokens {
+		//fmt.Println(token.Address, common.HexToAddress(token.Address))
+		tokens[common.HexToAddress(token.Address)] = unit.Token{Name: token.Name, Symbol: token.Symbol}
+	}
+
+	unit := graph.NewUnit(gra, fed, unitAlgorithm, gofer, tokens)
 	return unit, nil
 }
 

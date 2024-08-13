@@ -17,6 +17,8 @@ func main() {
 	rootCmd.AddCommand(
 		NewPriceCmd(&opts),
 		NewSupplyCmd(&opts),
+		NewFeedCmd(&opts),
+		NewMarketCapAndPriceCmd(&opts),
 	)
 
 	if err := rootCmd.Execute(); err != nil {
