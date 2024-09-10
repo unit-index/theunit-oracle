@@ -29,10 +29,10 @@ func NewMarketCapAndPriceCmd(opts *options) *cobra.Command {
 				// Set err to nil because error was already handled by marshaller.
 				err = nil
 			}()
-			if err = srv.Start(); err != nil {
-				return err
-			}
-			defer srv.CancelAndWait()
+			//if err = srv.Start(); err != nil {
+			//	return err
+			//}
+			//defer srv.CancelAndWait()
 
 			tokens, err := unit.NewTokens(args...)
 			if err != nil {
@@ -46,9 +46,9 @@ func NewMarketCapAndPriceCmd(opts *options) *cobra.Command {
 			fmt.Println("cap, price,", cap)
 			for _, p := range cap {
 				fmt.Println(p)
-				if mErr := srv.Marshaller.Write(os.Stdout, p); mErr != nil {
-					_ = srv.Marshaller.Write(os.Stderr, mErr)
-				}
+				//if mErr := srv.Marshaller.Write(os.Stdout, p); mErr != nil {
+				//	_ = srv.Marshaller.Write(os.Stderr, mErr)
+				//}
 			}
 			//
 			//// If any pair was returned with an error, then we should return a non-zero status code.

@@ -56,6 +56,7 @@ func (c *Config) Configure(d Dependencies, noGoferRPC bool) (transport.Transport
 	if err != nil {
 		return nil, nil, nil, err
 	}
+
 	tra, err := c.Transport.Configure(transportConfig.Dependencies{
 		Context: d.Context,
 		Signer:  sig,

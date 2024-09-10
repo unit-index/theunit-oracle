@@ -42,7 +42,22 @@ func (c *Config) Configure(ctx context.Context, logger log.Logger, noRPC bool) (
 	if err != nil {
 		return nil, err
 	}
-	return c.Unit.ConfigureUnit(ctx, cli, gfo, logger, noRPC)
+	signer, err := c.Ethereum.ConfigureSigner()
+	if err != nil {
+		return nil, err
+	}
+	fed, err := c.Feeds.Addresses()
+	if err != nil {
+		return nil, err
+	}
+
+	transport, err := c.Transport.ConfigureUnit(transportConfig.Dependencies{
+		Context: ctx,
+		Signer:  signer,
+		Feeds:   fed,
+		Logger:  logger,
+	})
+	return c.Unit.ConfigureUnit(ctx, cli, gfo, logger, noRPC, signer, transport, fed)
 }
 
 func (c *Config) ConfigureFeed(d Dependencies, noGoferRPC bool) (transport.Transport, gofer.Gofer, pkgUnit.Unit, error) {
@@ -66,31 +81,37 @@ func (c *Config) ConfigureFeed(d Dependencies, noGoferRPC bool) (transport.Trans
 	if err != nil {
 		return nil, nil, nil, err
 	}
-	tra, err := c.Transport.Configure(transportConfig.Dependencies{
-		Context: d.Context,
-		Signer:  sig,
-		Feeds:   fed,
-		Logger:  d.Logger,
-	})
-	if err != nil {
-		return nil, nil, nil, err
-	}
-	//gho, err := c.Ghost.Configure(ghostConfig.Dependencies{
-	//	Context:   d.Context,
-	//	Gofer:     gof,
-	//	Signer:    sig,
-	//	Transport: tra,
-	//	Logger:    d.Logger,
+	//tra, err := c.Transport.Configure(transportConfig.Dependencies{
+	//	Context: d.Context,
+	//	Signer:  sig,
+	//	Feeds:   fed,
+	//	Logger:  d.Logger,
 	//})
+	//if err != nil {
+	//	return nil, nil, nil, err
+	//}
 	gfo, err := c.Gofer.ConfigureGofer(d.Context, cli, d.Logger, noGoferRPC)
 	if err != nil {
 		return nil, nil, nil, err
 	}
-	unit, err := c.Unit.ConfigureUnit(d.Context, cli, gfo, d.Logger, noGoferRPC)
+
+	signer, err := c.Ethereum.ConfigureSigner()
 	if err != nil {
 		return nil, nil, nil, err
 	}
-	return tra, gof, unit, nil
+
+	transport, err := c.Transport.ConfigureUnit(transportConfig.Dependencies{
+		Context: d.Context,
+		Signer:  signer,
+		Feeds:   fed,
+		Logger:  d.Logger,
+	})
+
+	unit, err := c.Unit.ConfigureUnit(d.Context, cli, gfo, d.Logger, noGoferRPC, signer, transport, fed)
+	if err != nil {
+		return nil, nil, nil, err
+	}
+	return transport, gof, unit, nil
 }
 
 //func (c *Config) ConfigureRPCAgent(ctx context.Context, logger log.Logger) (*rpc.Agent, error) {
@@ -216,11 +237,13 @@ func (s *UnitServerServices) Start() error {
 		fmt.Println(err)
 		return err
 	}
-	if g, ok := s.Unit.(pkgUnit.StartableUnit); ok {
-		return g.Start()
+
+	if u, ok := s.Unit.(pkgUnit.StartableUnit); ok {
+		return u.Start()
 	}
 	return nil
 }
+
 func (s *UnitClientServices) CancelAndWait() {
 	s.ctxCancel()
 	if g, ok := s.Unit.(pkgUnit.StartableUnit); ok {

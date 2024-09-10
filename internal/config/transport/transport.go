@@ -75,6 +75,34 @@ func (c *Transport) Configure(d Dependencies) (transport.Transport, error) {
 	return p, nil
 }
 
+func (c *Transport) ConfigureUnit(d Dependencies) (transport.Transport, error) {
+	peerPrivKey, err := c.generatePrivKey()
+	if err != nil {
+		return nil, err
+	}
+	cfg := p2p.Config{
+		Mode:             p2p.ClientMode,
+		PeerPrivKey:      peerPrivKey,
+		Topics:           map[string]transport.Message{messages.UnitParamsMessageName: (*messages.UnitParams)(nil)},
+		MessagePrivKey:   ethkey.NewPrivKey(d.Signer),
+		ListenAddrs:      c.P2P.ListenAddrs,
+		BootstrapAddrs:   c.P2P.BootstrapAddrs,
+		DirectPeersAddrs: c.P2P.DirectPeersAddrs,
+		BlockedAddrs:     c.P2P.BlockedAddrs,
+		FeedersAddrs:     d.Feeds,
+		Discovery:        !c.P2P.DisableDiscovery,
+		Signer:           d.Signer,
+		Logger:           d.Logger,
+		AppName:          "spire",
+		AppVersion:       "1",
+	}
+	p, err := p2pTransportFactory(d.Context, cfg)
+	if err != nil {
+		return nil, err
+	}
+	return p, nil
+}
+
 func (c *Transport) ConfigureP2PBoostrap(d BootstrapDependencies) (transport.Transport, error) {
 	peerPrivKey, err := c.generatePrivKey()
 	if err != nil {

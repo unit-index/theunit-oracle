@@ -3,6 +3,7 @@ package marshal
 import (
 	encodingJSON "encoding/json"
 	"fmt"
+	"github.com/toknowwhy/theunit-oracle/pkg/unit"
 	"io"
 	"time"
 
@@ -33,6 +34,8 @@ func (j *json) Write(writer io.Writer, item interface{}) error {
 		i = j.handlePrice(typedItem)
 	case *gofer.Model:
 		i = j.handleModel(typedItem)
+	case *unit.UnitPerMonthParams:
+		i = j.handleUnitParams(typedItem)
 	case error:
 		i = j.handleError(typedItem)
 	default:
@@ -95,6 +98,20 @@ func (*json) handleError(err error) interface{} {
 	return struct {
 		Error string `json:"error"`
 	}{Error: err.Error()}
+}
+
+func (*json) handleUnitParams(params *unit.UnitPerMonthParams) interface{} {
+	return jsonUnitParams{
+		CSupply:       params.CSupply,
+		LastPrice:     params.LastPrice,
+		LastMarketCap: params.LastMarketCap,
+	}
+}
+
+type jsonUnitParams struct {
+	CSupply       float64 `json:"CSupply"`
+	LastMarketCap float64 `json:"LastMarketCap"`
+	LastPrice     float64 `json:"LastPrice"`
 }
 
 type jsonPrice struct {

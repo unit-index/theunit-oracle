@@ -2,7 +2,6 @@ package feeder
 
 import (
 	"context"
-	"fmt"
 	"github.com/hashicorp/go-multierror"
 	"github.com/toknowwhy/theunit-oracle/pkg/gofer"
 	"github.com/toknowwhy/theunit-oracle/pkg/gofer/graph/nodes"
@@ -132,7 +131,7 @@ func (f *Feeder) findFeedableNodes(ns []nodes.Node, t time.Time) []Feedable {
 	var feedables []Feedable
 	nodes.Walk(func(n nodes.Node) {
 		if feedable, ok := n.(Feedable); ok {
-			fmt.Println("gofer", feedable.OriginPair())
+			//fmt.Println("gofer", feedable.OriginPair())
 			if t.Sub(feedable.Price().Time) >= feedable.MinTTL() {
 				feedables = append(feedables, feedable)
 			}

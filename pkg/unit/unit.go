@@ -41,7 +41,7 @@ type Unit interface {
 	TokenTotalSupply(tokens Token) (*CSupply, error)
 	TokensTotalSupply(tokens ...Token) (map[Token]*CSupply, error)
 	Price() (string, error)
-	FeedMarketCapAndPrice(tokens ...Token) ([]UnitPerMonthParams, error)
+	FeedMarketCapAndPrice(tokens ...Token) (map[string]UnitPerMonthParams, error)
 }
 
 func NewTokens(s ...string) ([]Token, error) {
